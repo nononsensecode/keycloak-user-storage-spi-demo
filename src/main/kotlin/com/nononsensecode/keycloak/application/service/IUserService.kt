@@ -2,10 +2,7 @@ package com.nononsensecode.keycloak.application.service
 
 import com.nononsensecode.keycloak.domain.dto.UserDTO
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface IUserService {
     @GET("api/v1.0/users/id/{id}")
@@ -22,4 +19,19 @@ interface IUserService {
 
     @POST("api/v1.0/users/username/{username}")
     fun verifyCredentials(@Body password: String): Call<Boolean>
+
+    @GET("api/v1.0/users/count")
+    fun countUsers(): Call<Int>
+
+    @GET("api/v1.0/users")
+    fun getAllUsers(): Call<List<UserDTO>>
+
+    @GET("api/v1.0/users")
+    fun getPagedAllUsers(@Query("start") start: Int, @Query("maxResults") maxResults: Int): Call<List<UserDTO>>
+
+    @GET("api/v1.0/users/search/{searchString}")
+    fun getUsersBySearchString(@Path("searchString") searchString: String): Call<List<UserDTO>>
+
+    @GET("api/v1.0/users/search/{searchString}")
+    fun getPagedUsersBySearchString(@Path("searchString") searchString: String, @Query("start") start: Int, @Query("maxResults") maxResults: Int): Call<List<UserDTO>>
 }

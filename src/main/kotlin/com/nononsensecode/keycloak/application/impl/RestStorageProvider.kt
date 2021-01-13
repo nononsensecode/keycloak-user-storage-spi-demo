@@ -1,6 +1,7 @@
 package com.nononsensecode.keycloak.application.impl
 
 import com.nononsensecode.keycloak.application.service.IUserService
+import com.nononsensecode.keycloak.domain.dto.UserDTO
 import com.nononsensecode.keycloak.domain.model.CustomUserModel
 import org.keycloak.component.ComponentModel
 import org.keycloak.models.GroupModel
@@ -36,37 +37,42 @@ class RestStorageProvider(
     }
 
     override fun getUsersCount(realm: RealmModel?): Int {
-        TODO("Not yet implemented")
+        return userService.countUsers().execute().body() ?: 0
     }
 
-    override fun getUsers(realm: RealmModel?): MutableList<UserModel> {
-        TODO("Not yet implemented")
+    override fun getUsers(realm: RealmModel): MutableList<UserModel> {
+        val userList = userService.getAllUsers().execute().body()
+        return convertUsers(realm, userList)
     }
 
-    override fun getUsers(realm: RealmModel?, firstResult: Int, maxResults: Int): MutableList<UserModel> {
-        TODO("Not yet implemented")
+    override fun getUsers(realm: RealmModel, firstResult: Int, maxResults: Int): MutableList<UserModel> {
+        val userList = userService.getPagedAllUsers(firstResult, maxResults).execute().body()
+        return convertUsers(realm, userList)
     }
 
-    override fun searchForUser(search: String?, realm: RealmModel?): MutableList<UserModel> {
-        TODO("Not yet implemented")
+    override fun searchForUser(search: String, realm: RealmModel): MutableList<UserModel> {
+        val userList = userService.getUsersBySearchString(search).execute().body()
+        return convertUsers(realm, userList)
     }
 
     override fun searchForUser(
-        search: String?,
-        realm: RealmModel?,
+        search: String,
+        realm: RealmModel,
         firstResult: Int,
         maxResults: Int
     ): MutableList<UserModel> {
-        TODO("Not yet implemented")
+        val userList = userService.getPagedUsersBySearchString(search, firstResult, maxResults)
+            .execute().body()
+        return convertUsers(realm, userList)
     }
 
-    override fun searchForUser(params: MutableMap<String, String>?, realm: RealmModel?): MutableList<UserModel> {
+    override fun searchForUser(params: MutableMap<String, String>, realm: RealmModel): MutableList<UserModel> {
         return getUsers(realm)
     }
 
     override fun searchForUser(
         params: MutableMap<String, String>?,
-        realm: RealmModel?,
+        realm: RealmModel,
         firstResult: Int,
         maxResults: Int
     ): MutableList<UserModel> {
@@ -92,6 +98,11 @@ class RestStorageProvider(
         realm: RealmModel?
     ): MutableList<UserModel> {
         return mutableListOf()
+    }
+
+    private fun convertUsers(realm: RealmModel, users: List<UserDTO>?): MutableList<UserModel> {
+        return users?.map { CustomUserModel(session, realm, componentModel, it) }?.toMutableList()
+            ?: mutableListOf()
     }
 
 }
