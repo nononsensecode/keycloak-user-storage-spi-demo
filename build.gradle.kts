@@ -16,18 +16,6 @@ tasks.withType<KotlinCompile>().configureEach {
     }
 }
 
-//val fatJar = task("fatJar", type = Jar::class) {
-//    archiveBaseName.set("my-storage-provider-fat")
-//    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-//    with(tasks["jar"] as CopySpec)
-//}
-
-//tasks {
-//    "build" {
-//        dependsOn(fatJar)
-//    }
-//}
-
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
@@ -47,6 +35,6 @@ dependencies {
 
 tasks.withType<Jar> {
     exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA", "META-INF/*.MF")
-    archiveBaseName.set("my-storage-provider-fat")
+    archiveBaseName.set("rest-storage-provider")
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
 }

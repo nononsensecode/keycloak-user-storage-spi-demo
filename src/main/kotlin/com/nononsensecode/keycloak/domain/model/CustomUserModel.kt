@@ -9,7 +9,7 @@ import org.keycloak.storage.adapter.AbstractUserAdapterFederatedStorage
 
 class CustomUserModel(
     val session: KeycloakSession,
-    val realm: RealmModel,
+    val realm: RealmModel?,
     val componentModel: ComponentModel,
     val user: UserDTO?
 ): AbstractUserAdapterFederatedStorage(session, realm, componentModel), UserModel {
