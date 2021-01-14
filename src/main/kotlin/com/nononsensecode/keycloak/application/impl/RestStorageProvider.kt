@@ -11,7 +11,6 @@ import org.keycloak.credential.CredentialInputUpdater
 import org.keycloak.credential.CredentialInputValidator
 import org.keycloak.models.*
 import org.keycloak.models.credential.PasswordCredentialModel
-import org.keycloak.models.utils.KeycloakModelUtils
 import org.keycloak.storage.ReadOnlyException
 import org.keycloak.storage.StorageId
 import org.keycloak.storage.UserStorageProvider

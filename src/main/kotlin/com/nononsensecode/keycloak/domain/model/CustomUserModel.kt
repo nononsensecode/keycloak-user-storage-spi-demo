@@ -4,7 +4,6 @@ import com.nononsensecode.keycloak.domain.dto.UserDTO
 import mu.KotlinLogging
 import org.keycloak.component.ComponentModel
 import org.keycloak.models.*
-import org.keycloak.models.utils.KeycloakModelUtils
 import org.keycloak.storage.adapter.AbstractUserAdapterFederatedStorage
 import java.util.stream.Stream
 
