@@ -10,5 +10,6 @@ data class UserDTO(
     val lastName: String,
     val email: String,
     val enabled: Boolean,
-    val emailVerified: Boolean
+    val emailVerified: Boolean,
+    val roles: Set<RoleDTO>
 )

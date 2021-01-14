@@ -11,6 +11,7 @@ import org.keycloak.credential.CredentialInputUpdater
 import org.keycloak.credential.CredentialInputValidator
 import org.keycloak.models.*
 import org.keycloak.models.credential.PasswordCredentialModel
+import org.keycloak.models.utils.KeycloakModelUtils
 import org.keycloak.storage.ReadOnlyException
 import org.keycloak.storage.StorageId
 import org.keycloak.storage.UserStorageProvider
@@ -33,21 +34,21 @@ class RestStorageProvider(
         logger.info { "External id: $externalId" }
         val user = userService.getUserByUsername(externalId).execute().body()
         logger.info { "User found: $user" }
-        return CustomUserModel(session, realm, componentModel, user)
+        return buildUser(realm, user)
     }
 
     override fun getUserByUsername(username: String?, realm: RealmModel?): UserModel {
         logger.info { "Finding user with username $username" }
         val user = userService.getUserByUsername(username).execute().body()
         logger.info { "User found: $user" }
-        return CustomUserModel(session, realm, componentModel, user)
+        return buildUser(realm, user)
     }
 
     override fun getUserByEmail(email: String?, realm: RealmModel?): UserModel {
         logger.info { "Finding user with email $email" }
         val user = userService.getUserByEmail(email).execute().body()
         logger.info { "User found: $user" }
-        return CustomUserModel(session, realm, componentModel, user)
+        return buildUser(realm, user)
     }
 
     override fun getUsersCount(realm: RealmModel?): Int {
@@ -120,7 +121,7 @@ class RestStorageProvider(
     }
 
     private fun convertUsers(realm: RealmModel?, users: List<UserDTO>?): MutableList<UserModel> {
-        return users?.map { CustomUserModel(session, realm, componentModel, it) }?.toMutableList()
+        return users?.map { buildUser(realm, it) }?.toMutableList()
             ?: mutableListOf()
     }
 
@@ -161,6 +162,11 @@ class RestStorageProvider(
 
     override fun getDisableableCredentialTypes(realm: RealmModel?, user: UserModel?): MutableSet<String> {
         return mutableSetOf()
+    }
+
+    private fun buildUser(realm: RealmModel?, userDTO: UserDTO?): CustomUserModel {
+        logger.info { "Building user using DTO: $userDTO" }
+        return CustomUserModel(session, realm, componentModel, userDTO)
     }
 
 }
