@@ -30,38 +30,36 @@ class CustomUserModel(
 
     override fun setUsername(username: String?) {}
 
-    override fun getClientRoleMappingsStream(app: ClientModel?): Stream<RoleModel> {
-        logger.info { "Calling getClientRoleMappingsStream" }
-        val userRoles = this.user?.roles?.filter { it.client == app?.name } ?: emptyList()
-        val clientRoles = mutableSetOf<RoleModel>()
-        userRoles.forEach {
-            if (app != null) {
-                clientRoles.add(app.getRole(it.name))
-            }
-        }
-        return clientRoles.stream()
-    }
-
-    override fun getClientRoleMappings(app: ClientModel?): MutableSet<RoleModel> {
-        logger.info { "Calling getClientRoleMappings" }
-        val userRoles = this.user?.roles?.filter { it.client == app?.name } ?: emptyList()
-        val clientRoles = mutableSetOf<RoleModel>()
-        userRoles.forEach {
-            if (app != null) {
-                clientRoles.add(app.getRole(it.name))
-            }
-        }
-        return clientRoles
-    }
-
-
     override fun getRoleMappings(): MutableSet<RoleModel> {
+        val roles = addRealmRoles()
+        return addClientRoles(roles)
+    }
+
+    private fun addRealmRoles(): MutableSet<RoleModel> {
         val roles = mutableSetOf<RoleModel>()
-        this.user?.roles?.forEach {
+        user?.roles?.forEach { roleDTO ->
             if (realm != null) {
-                roles.add(realm.getRole(it.name))
+                val realmRole = realm.getRole(roleDTO.name) ?: null
+                if (realmRole != null) {
+                    roles.add(realmRole)
+                }
             }
         }
+
+        return roles
+    }
+
+    private fun addClientRoles(roles: MutableSet<RoleModel>): MutableSet<RoleModel> {
+        user?.roles?.forEach { roleDTO ->
+            realm?.clientsStream?.forEach { client ->
+                client.rolesStream.forEach { clientRole ->
+                    if (client.clientId == roleDTO.client && clientRole.name == roleDTO.name) {
+                        roles.add(clientRole)
+                    }
+                }
+            }
+        }
+
         return roles
     }
 }

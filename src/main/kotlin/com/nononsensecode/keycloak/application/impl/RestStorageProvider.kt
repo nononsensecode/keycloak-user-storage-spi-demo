@@ -16,6 +16,7 @@ import org.keycloak.storage.StorageId
 import org.keycloak.storage.UserStorageProvider
 import org.keycloak.storage.user.UserLookupProvider
 import org.keycloak.storage.user.UserQueryProvider
+import kotlin.streams.toList
 
 private val logger = KotlinLogging.logger {  }
 
